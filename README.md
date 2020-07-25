@@ -38,6 +38,8 @@
   - [如何获取user_id](#如何获取user_id)
   - [常见问题](#常见问题)
   - [相关项目](#相关项目)
+  - [贡献](#贡献)
+  - [贡献者](#贡献者)
   - [注意事项](#注意事项)
 
 ## 获取到的字段
@@ -136,11 +138,23 @@ $ python3 -m pip install weibo-spider
 $ python3 -m weibo_spider
 ```
 
-第一次执行，会自动在当前目录创建config.json配置文件，配置好后执行同样的命令就可以获取微博了。如果你已经有config.json文件了，也可以通过config_path参数配置config.json路径，运行程序，命令行如下：
+第一次执行，会自动在当前目录创建config.json配置文件，配置好后执行同样的命令就可以获取微博了。
+
+如果你已经有config.json文件了，也可以通过config_path参数配置config.json路径，运行程序，命令行如下：
 
 ```bash
 $ python3 -m weibo_spider --config_path="config.json"
 ```
+
+如果你想指定文件（csv、txt、json、图片、视频）保存路径，可以通过output_dir参数设定。假如你想把文件保存到/home/weibo/目录，可以运行如下命令：
+```
+$ python3 -m weibo_spider --output_dir="/home/weibo/"
+```
+如果你想通过命令行输入user_id，可以使用参数u，可以输入一个或多个user_id，每个user_id以英文逗号分开，如果这些user_id中有重复的user_id，程序会自动去重。命令行如下：
+```
+$ python3 -m weibo_spider --u="1669879400,1223178222"
+```
+程序会获取user_id分别为1669879400和1223178222的微博用户的微博，后面会讲[如何获取user_id](#如何获取user_id)。该方式的所有user_id使用config.json中的since_date和end_date设置，通过修改它们的值可以控制爬取的时间范围。若config.json中的user_id_list是文件路径，每个命令行中的user_id都会自动保存到该文件内，且自动更新since_date；若不是路径，user_id会保存在当前目录的user_id_list.txt内，且自动更新since_date，若当前目录下不存在user_id_list.txt，程序会自动创建它。
 
 ## 个性化定制程序（可选）
 
@@ -216,6 +230,14 @@ $ python3 -m weibo_spider --config_path="config.json"
 
 - [weibo-crawler](https://github.com/dataabc/weibo-crawler) - 功能和本项目完全一样，可以不添加cookie，获取的微博属性更多；
 - [weibo-search](https://github.com/dataabc/weibo-search) - 可以连续获取一个或多个**微博关键词搜索**结果，并将结果写入文件（可选）、数据库（可选）等。所谓微博关键词搜索即：**搜索正文中包含指定关键词的微博**，可以指定搜索的时间范围。对于非常热门的关键词，一天的时间范围，可以获得**1000万**以上的搜索结果，N天的时间范围就可以获得1000万 X N搜索结果。对于大多数关键词，一天产生的相应微博数量应该在1000万条以下，因此可以说该程序可以获得大部分关键词的全部或近似全部的搜索结果。而且该程序可以获得搜索结果的所有信息，本程序获得的微博信息该程序都能获得。
+
+## 贡献
+
+欢迎为本项目贡献力量。贡献可以是提交代码，可以是通过issue提建议（如新功能、改进方案等），也可以是通过issue告知我们项目存在哪些bug、缺点等，具体贡献方式见[为本项目做贡献](https://github.com/dataabc/weiboSpider/blob/master/CONTRIBUTING.md)。
+
+## 贡献者
+
+感谢所有为本项目贡献力量的朋友，贡献者详情见[贡献者](https://github.com/dataabc/weiboSpider/blob/master/docs/contributors.md)页面。
 
 ## 注意事项
 

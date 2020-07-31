@@ -50,6 +50,9 @@ def validate_config(config):
             max(random_wait_pages), int)):
         logger.warning(u'random_wait_pages列表中的值应为整数类型,请重新输入')
         sys.exit()
+    if min(random_wait_pages) < 1:
+        logger.warning(u'random_wait_pages列表中的值应大于0,请重新输入')
+        sys.exit()
 
     # 验证random_wait_seconds
     random_wait_seconds = config['random_wait_seconds']
@@ -60,6 +63,26 @@ def validate_config(config):
             max(random_wait_seconds), int)):
         logger.warning(u'random_wait_seconds列表中的值应为整数类型,请重新输入')
         sys.exit()
+    if min(random_wait_seconds) < 1:
+        logger.warning(u'random_wait_seconds列表中的值应大于0,请重新输入')
+        sys.exit()
+
+    # 验证global_wait
+    global_wait = config['global_wait']
+    if not isinstance(global_wait, list):
+        logger.warning(u'global_wait参数值应为list类型,请重新输入')
+        sys.exit()
+    for g in global_wait:
+        if not isinstance(g, list):
+            logger.warning(u'global_wait参数内的值应为长度为2的list类型,请重新输入')
+            sys.exit()
+        if len(g) != 2:
+            logger.warning(u'global_wait参数内的list长度应为2,请重新输入')
+            sys.exit()
+        for i in g:
+            if (not isinstance(i, int)) or i < 1:
+                logger.warning(u'global_wait列表中的值应为大于0的整数,请重新输入')
+                sys.exit()
 
     # 验证write_mode
     write_mode = ['txt', 'csv', 'json', 'mongo', 'mysql']

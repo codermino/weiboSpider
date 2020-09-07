@@ -24,6 +24,7 @@ flags.DEFINE_string('config_path', None, 'The path to config.json.')
 flags.DEFINE_string('u', None, 'The user_id we want to input.')
 flags.DEFINE_string('user_id_list', None, 'The path to user_id_list.txt.')
 flags.DEFINE_string('output_dir', None, 'The dir path to store results.')
+
 logging_path = os.path.split(
     os.path.realpath(__file__))[0] + os.sep + 'logging.conf'
 logging.config.fileConfig(logging_path)
@@ -35,10 +36,11 @@ class Spider:
         """Weibo类初始化"""
         self.filter = config[
             'filter']  # 取值范围为0、1,程序默认值为0,代表要爬取用户的全部微博,1代表只爬取用户的原创微博
-        since_date = str(config['since_date'])
-        if since_date.isdigit():
-            since_date = str(date.today() - timedelta(int(since_date)))
-        self.since_date = since_date  # 起始时间，即爬取发布日期从该值到结束时间的微博，形式为yyyy-mm-dd
+        since_date = config['since_date']
+        if isinstance(since_date, int):
+            since_date = date.today() - timedelta(since_date)
+        self.since_date = str(
+            since_date)  # 起始时间，即爬取发布日期从该值到结束时间的微博，形式为yyyy-mm-dd
         self.end_date = config[
             'end_date']  # 结束时间，即爬取发布日期从起始时间到该值的微博，形式为yyyy-mm-dd，特殊值"now"代表现在
         random_wait_pages = config['random_wait_pages']
@@ -61,6 +63,8 @@ class Spider:
             'video_download']  # 取值范围为0、1,程序默认为0,代表不下载微博视频,1代表下载
         self.cookie = {'Cookie': config['cookie']}
         self.mysql_config = config.get('mysql_config')  # MySQL数据库连接配置，可以不填
+        
+        self.sqlite_config = config.get('sqlite_config')
 
         self.user_config_file_path = ''
         user_id_list = config['user_id_list']
@@ -119,8 +123,7 @@ class Spider:
         try:
             since_date = datetime_util.str_to_time(
                 self.user_config['since_date'])
-            now = datetime.now().strftime('%Y-%m-%d %H:%M')
-            now = datetime.strptime(now, '%Y-%m-%d %H:%M')
+            now = datetime.now()
             if since_date <= now:
                 page_num = IndexParser(
                     self.cookie,
@@ -226,7 +229,11 @@ class Spider:
             from .writer import MongoWriter
 
             self.writers.append(MongoWriter())
-
+        if 'sqlite' in self.write_mode:
+            from .writer import SqliteWriter
+        
+            self.writers.append(SqliteWriter(self.sqlite_config))
+        
         self.downloaders = []
         if self.pic_download == 1:
             from .downloader import ImgDownloader

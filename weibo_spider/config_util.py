@@ -30,8 +30,8 @@ def validate_config(config):
             sys.exit()
 
     # 验证since_date
-    since_date = str(config['since_date'])
-    if (not _is_date(since_date)) and (not since_date.isdigit()):
+    since_date = config['since_date']
+    if (not _is_date(str(since_date))) and (not isinstance(since_date, int)):
         logger.warning(u'since_date值应为yyyy-mm-dd形式或整数,请重新输入')
         sys.exit()
 
@@ -85,14 +85,14 @@ def validate_config(config):
                 sys.exit()
 
     # 验证write_mode
-    write_mode = ['txt', 'csv', 'json', 'mongo', 'mysql']
+    write_mode = ['txt', 'csv', 'json', 'mongo', 'mysql', 'sqlite']
     if not isinstance(config['write_mode'], list):
         logger.warning(u'write_mode值应为list类型')
         sys.exit()
     for mode in config['write_mode']:
         if mode not in write_mode:
             logger.warning(
-                u'%s为无效模式，请从txt、csv、json、mongo和mysql中挑选一个或多个作为write_mode',
+                u'%s为无效模式，请从txt、csv、json、mongo和mysql、sqlite中挑选一个或多个作为write_mode',
                 mode)
             sys.exit()
 
